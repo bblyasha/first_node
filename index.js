@@ -54,9 +54,9 @@ app.delete('/delete/:id', (req,res) => {
 
 app.get('/users/:gender', (req, res) => {
     if (req.params.gender == 'M') {
-        res.send(users.filter(item => item.isMan != false))
+        res.send(users.filter(item => item.isMan))
     } else {
-        res.send(users.filter(item => item.isMan != true))
+        res.send(users.filter(item => !item.isMan))
     } 
 })
 
