@@ -9,7 +9,7 @@ const users = [{id:1, name:"Pasha", isMan: true, age:26},
                {id:2, name:"Natalya", isMan: false, age:20},
                {id:4, name:"Liza", isMan: false, age:16},
                {id:5, name:"Motya", isMan: true, age:30},
-               {id:6, name:"Alex", isMan: true, age:50}
+               {id:6, name:"Alex", isMan: true, age:55}
 ]
 
 app.get('/', (req,res) => {
@@ -54,16 +54,15 @@ app.delete('/delete/:id', (req,res) => {
 
 app.get('/users/:gender', (req, res) => {
     if (req.params.gender == 'M') {
-        res.send(users.filter(item => item.isMan == true))
+        res.send(users.filter(item => item.isMan != false))
     } else {
-        res.send(users.filter(item => item.isMan == false))
+        res.send(users.filter(item => item.isMan != true))
     } 
 })
 
 app.get('/filtredUsers', (req, res) => {
-    const minAge = req.query.min
-    const maxAge = req.query.max
-    const filtredUsers = users.filter(item => item.age >= minAge && item.age <=maxAge)
+    const {min,max} = req.query
+    const filtredUsers = users.filter(item => item.age >= min && item.age <=max)
     res.send(filtredUsers)
 })
 app.listen(PORT,() => {
