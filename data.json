@@ -1,7 +1,1 @@
-[
-    { "id": 1, "name": "Pasha", "isMan": true, "age": 26 },
-    { "id": 2, "name": "Natalya", "isMan": false, "age": 20 },
-    { "id": 4, "name": "Liza", "isMan": false, "age": 16 },
-    { "id": 5, "name": "Motya", "isMan": true, "age": 30 },
-    { "id": 6, "name": "Dmitry", "isMan": true, "age": 8 }
-  ]
+[{"id":1,"name":"Pasha","isMan":true,"age":26},{"id":2,"name":"Natalya","isMan":false,"age":20},{"id":4,"name":"Liza","isMan":false,"age":16},{"id":5,"name":"Motya","isMan":true,"age":30},{"id":6,"name":"Dmitry","isMan":true,"age":8},{"id":7,"name":"Vika","isMan":false,"age":5}]

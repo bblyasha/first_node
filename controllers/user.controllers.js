@@ -23,7 +23,8 @@ class UsersControllers {
         const users = this.getUsers()
         if (gender == 'M') {
             return users.filter(item => item.isMan)
-        } else {
+        } 
+        if (gender == 'F') {
             return users.filter(item => !item.isMan)
         } 
     }
