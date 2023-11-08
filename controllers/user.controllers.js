@@ -30,8 +30,8 @@ class UsersControllers {
     }
     getUsersByAge(obj){
         const users = this.getUsers()
-        const {min,max} = obj
-        return users.filter(item => item.age >= min && item.age <=max)
+        const {minAge,maxAge} = obj
+        return users.filter(item => item.age >= minAge && item.age <=maxAge)
     }
 }
 

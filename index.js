@@ -42,11 +42,11 @@ app.use(Sentry.Handlers.errorHandler());
 
 const swaggerOptions = {
   swaggerDefinition: {
+      openapi: '3.0.0',
       info: {
         title:  "Users API",
         description: "User API informartion"
-      },
-      servers: ["http://localhost:3000"]
+      }
   },
   apis: ["./routes/users.routes.js"]
 }

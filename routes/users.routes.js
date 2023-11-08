@@ -66,7 +66,7 @@ router.get('/', (req,res) => {
  *         application/json:
  *           schema:
  *             type: object
- *             example: {"id": 1, "name": "Rikki", "age": 7, "isMan": true}
+ *             example: {"id": 1, "name": "Rikki", "isMan": true, "age": 7}
  *     responses:
  *       200:
  *         description: User has been successfully created.
@@ -108,20 +108,18 @@ router.post('/create', [
  *         schema:
  *           type: integer
  *         description: User ID.
- *     request:
+ *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               age:
- *                 type: string
+ *             example: {"name": "Rikki", "isMan": true}
  *     responses:
  *       200:
  *         description: User data has been successfully updated.
+ *       400:
+ *         description: Bad request.
  */
 
 
@@ -166,14 +164,12 @@ router.put('/usersById/:id', validateUserUpdate,
  *         application/json:
  *           schema:
  *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               age:
- *                 type: number
+ *             example: {"name": "Rikki", "isMan": true}
  *     responses:
  *       200:
  *         description: User data has been successfully updated.
+ *       400:
+ *         description: Bad request.
  */
 
 router.patch('/usersById/:id', validateUserUpdate, 
@@ -284,12 +280,12 @@ router.get('/usersByGender/:gender', param('gender').isString().isLength({ min: 
  *     description: Returns a list of users who meet the specified age.
  *     parameters:
  *       - in: query
- *         name: min
+ *         name: minAge
  *         description: Minimum age of users (inclusive).
  *         schema:
  *           type: integer
  *       - in: query
- *         name: max
+ *         name: maxAge
  *         description: Maximum age of users (inclusive).
  *         schema:
  *           type: integer
@@ -302,8 +298,8 @@ router.get('/usersByGender/:gender', param('gender').isString().isLength({ min: 
 
 
 router.get('/filteredUsers', [
-    query('min').isNumeric().withMessage('Параметр minAge должен быть числом'),
-    query('max').isNumeric().withMessage('Параметр maxAge должен быть числом'),
+    query('minAge').isNumeric().withMessage('Параметр minAge должен быть числом'),
+    query('maxAge').isNumeric().withMessage('Параметр maxAge должен быть числом'),
     ],
     (req, res) => {
         validationErrors(req,res)
