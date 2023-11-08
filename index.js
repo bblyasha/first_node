@@ -9,6 +9,13 @@ app.use(express.json())
 const PORT = process.env.PORT
 const DSN = process.env.DSN
 //const fs = require("fs")
+const swaggerUi = require("swagger-ui-express");
+//const swaggerSpec = require("./swaggerSpec.js");
+const swaggerJSDoc = require('swagger-jsdoc');
+
+const routes = require("./routes/index")
+app.use('/api', routes)
+
 
 Sentry.init({
     dsn: DSN,
@@ -32,13 +39,23 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 app.use(Sentry.Handlers.errorHandler());
 
-const routes = require("./routes/index")
-app.use('/api', routes)
 
+const swaggerOptions = {
+  swaggerDefinition: {
+      info: {
+        title:  "Users API",
+        description: "User API informartion"
+      },
+      servers: ["http://localhost:3000"]
+  },
+  apis: ["./routes/users.routes.js"]
+}
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions)
+app.use("/api-docs", swaggerUi.serve,swaggerUi.setup(swaggerDocs))
+
+//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); 
 
 app.listen(PORT,() => {
     console.log(`example app listenig on ${PORT}`)
 })
-
-
- 
