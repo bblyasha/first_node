@@ -6,6 +6,7 @@ const res = require('express/lib/response')
 let app = express()
 const { ProfilingIntegration } = require("@sentry/profiling-node");
 app.use(express.json())
+
 const PORT = process.env.PORT
 const DSN = process.env.DSN
 //const fs = require("fs")
@@ -13,7 +14,7 @@ const swaggerUi = require("swagger-ui-express");
 //const swaggerSpec = require("./swaggerSpec.js");
 const swaggerJSDoc = require('swagger-jsdoc');
 
-const routes = require("./routes/index")
+const routes = require("./routes/index.js")
 app.use('/api', routes)
 
 
@@ -53,8 +54,7 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions)
 app.use("/api-docs", swaggerUi.serve,swaggerUi.setup(swaggerDocs))
-
-//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); 
+ 
 
 app.listen(PORT,() => {
     console.log(`example app listenig on ${PORT}`)

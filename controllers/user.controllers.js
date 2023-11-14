@@ -11,9 +11,17 @@ class UsersControllers {
         users.push(user)
         UsersService.saveUsers(users)
     }
-    updateUser(userId) {
+    updateUser(userId, userData) {
         const users = this.getUsers()
-        return users.find(item => item.id == userId)
+        const userToUpdate = users.find(item => item.id == userId)
+        if (!userToUpdate) {
+            return null
+        }
+        Object.assign(userToUpdate,userData)
+        const indexToReplace = users.findIndex(user => user.id == userId)
+        users[indexToReplace] = userToUpdate
+        UsersService.saveUsers(users)
+        return userToUpdate
     }
     deleteUser(userId) {
         const users = this.getUsers()

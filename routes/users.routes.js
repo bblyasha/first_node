@@ -1,32 +1,12 @@
 const express = require("express")
 const router = express.Router()
 const Sentry = require("@sentry/node")
-const { query, body, param, validationResult } = require('express-validator');
 const UsersControllers = require('../controllers/user.controllers')
 const fs = require("fs")
 const UsersService = require("../services/users.services")
+const { createValidation, deleteValidation, getByGenderValidation, getFilteredValidation, 
+    validateUserUpdate, validationErrors } = require('../validationHelper.js')
 
-
-function validationErrors (req,res) {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-}
-
-function validateUserUpdate(req, res, next) {
-    const validationRules = [
-        param('id').isInt().withMessage('Параметр "id" должен быть целым числом'),
-        body('name').optional().isLength({ min: 2 }),
-        body('isMan').optional().isBoolean().withMessage('Поле "isMan" должно быть булевым значением'),
-        body('age').optional().isLength({ min: 1, max: 2 }).isNumeric()
-    ];
-
-    validationErrors(req,res)
-
-    next();
-}
 
 /**
  * @swagger
@@ -75,13 +55,7 @@ router.get('/', (req,res) => {
  */
 
 
-router.post('/create', [
-    body('name').not().isEmpty().withMessage('Поле "name" обязательно').isLength({min:2}),
-    body('isMan').not().isEmpty().withMessage('Поле "isMan" обязательно')
-    .isBoolean().withMessage('Поле "isMan" должно быть булевым значением'),
-    body('age').not().isEmpty().withMessage('Поле "age" обязательно')
-    .isLength({ min: 1, max: 2 }).isNumeric()
-    ],
+router.post('/create', createValidation,
     (req,res) => {
         validationErrors(req,res)
     try {
@@ -128,15 +102,10 @@ router.put('/usersById/:id', validateUserUpdate,
     try {
         const userData = req.body
         const userId = req.params.id
-        const userToUpdate = UsersControllers.updateUser(userId)
+        const userToUpdate = UsersControllers.updateUser(userId,userData)
         if (!userToUpdate) {
             res.sendStatus(404)
         }
-        Object.assign(userToUpdate, userData) 
-        const users = UsersControllers.getUsers()
-        const indexToReplace = users.findIndex(user => user.id == userId)
-        users[indexToReplace] = userToUpdate
-        UsersService.saveUsers(users)
         res.send(userToUpdate)
     } catch (err) {
         Sentry.captureException(err)
@@ -175,18 +144,13 @@ router.put('/usersById/:id', validateUserUpdate,
 router.patch('/usersById/:id', validateUserUpdate, 
     (req,res) => {
      try {
-        const updatedField = req.body
+        const userData = req.body
         const userId = req.params.id
-        const user = UsersControllers.updateUser(userId)
-        if (!user) {
-        res.sendStatus(404)
+        const userToUpdate = UsersControllers.updateUser(userId,userData)
+        if (!userToUpdate) {
+            res.sendStatus(404)
         }
-        Object.assign(user,updatedField)
-        const users = UsersControllers.getUsers()
-        const indexToReplace = users.findIndex(user => user.id == userId)
-        users[indexToReplace] = user
-        UsersService.saveUsers(users)
-        res.send(user)
+        res.send(userToUpdate)
     } catch (err) {
         Sentry.captureException(err)
     }
@@ -215,7 +179,7 @@ router.patch('/usersById/:id', validateUserUpdate,
  */
 
 
-router.delete('/delete/:id', param('id').isInt().withMessage('Параметр id должен быть целым числом'),
+router.delete('/delete/:id', deleteValidation,
     (req,res) => {
         validationErrors(req,res)
     try {
@@ -258,7 +222,7 @@ router.delete('/delete/:id', param('id').isInt().withMessage('Параметр i
  */
 
 
-router.get('/usersByGender/:gender', param('gender').isString().isLength({ min: 1, max: 1 }).withMessage('Параметр gender должен быть строкой длиной 1 символ'),
+router.get('/usersByGender/:gender', getByGenderValidation,
     (req, res) => {
         validationErrors(req,res)
     try {
@@ -297,10 +261,7 @@ router.get('/usersByGender/:gender', param('gender').isString().isLength({ min: 
  */
 
 
-router.get('/filteredUsers', [
-    query('minAge').isNumeric().withMessage('Параметр minAge должен быть числом'),
-    query('maxAge').isNumeric().withMessage('Параметр maxAge должен быть числом'),
-    ],
+router.get('/filteredUsers', getFilteredValidation,
     (req, res) => {
         validationErrors(req,res)
     try {
